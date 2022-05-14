@@ -15,3 +15,7 @@ as per the guide.
 
 Added redux for better stae managment with type safe code
 --init Data,addCompany,updateCompany,deleteCompany (UI)
+
+13-May
+
+Added Api for Adding,Updatig,Delete Details
