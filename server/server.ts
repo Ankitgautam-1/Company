@@ -1,7 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { addCompany, getCompany } from "./src/routes/route";
+import {
+  addCompany,
+  deleteCompany,
+  getCompany,
+  updateCompany,
+} from "./src/routes/route";
 import mongoose from "mongoose";
 dotenv.config();
 const app = express();
@@ -23,6 +28,8 @@ mongoose
     });
     app.get("/getCompany", getCompany);
     app.post("/addCompany", addCompany);
+    app.delete("/deleteCompany/:company_id", deleteCompany);
+    app.patch("/updateCompany", updateCompany);
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });

@@ -17,40 +17,217 @@ const getCompany = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json(err);
     });
 };
+const deleteCompany = async (req: Request, res: Response): Promise<void> => {
+  const company_id = req.params.company_id;
+  if (company_id === null) {
+    res.status(400).json("Missing parameter");
+    return;
+  }
 
-const addCompany = async (req: Request, res: Response): Promise<void> => {
-  const name = req.body.name;
   database.useDb("TestDB");
   database
     .collection("companies")
-    .find({ company_name: name })
-    .toArray()
-    .then((all) => {
-      if (all.length === 0) {
-        database
-          .collection("companies")
-          .insertOne({
-            company_id: uuid(),
-            company_name: "Uno Tech Solution",
-            company_description:
-              "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Amet odit voluptatem maiores neque quis perspiciatis. Architecto excepturi quasi reprehenderit, quo exercitationem magni vitae. Nam totam voluptatem cumque inventore amet enim, vitae itaque magni molestias iusto ipsam officiis! Libero quae nisi a tempora ut omnis non velit nulla beatae fugiat quibusdam nam esse autem ex reiciendis mollitia minus, dignissimos accusantium. Error.",
-            company_contact_number: 4875494514,
-            company_email: "Unotech@sul.com",
-            company_logo:
-              "https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_960_720.png",
-            company_state: "Maharastra",
-            company_city: "Thane",
-          })
-          .then((doc) => {
-            res.json(doc);
-          })
-          .catch((err) => {
-            res.status(500).json(err);
-          });
-      } else {
-        res.status(400).json("Company already exsit with name");
-      }
+    .deleteOne({ company_id: company_id })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
     });
 };
 
-export { getCompany, addCompany };
+const addCompany = async (req: Request, res: Response): Promise<void> => {
+  const company_id = req.body.company_id;
+  const company_name = req.body.company_name;
+  const company_description = req.body.company_description;
+  const company_contact_number = req.body.company_contact_number;
+  const company_email = req.body.company_email;
+  const company_logo = req.body.company_logo;
+  const company_state = req.body.company_state;
+  const company_city = req.body.company_city;
+  const isvalid =
+    company_id !== null &&
+    company_name !== null &&
+    company_description !== null &&
+    company_contact_number !== null &&
+    company_email !== null &&
+    company_logo !== null &&
+    company_state !== null &&
+    company_city !== null;
+
+  if (!isvalid) {
+    res.status(400).json("Missing parameter");
+    return;
+  } else {
+    database.useDb("TestDB");
+    database
+      .collection("companies")
+      .find({ company_name: company_name })
+      .toArray()
+      .then((all) => {
+        if (all.length === 0) {
+          database
+            .collection("companies")
+            .find({ company_email: company_email })
+            .toArray()
+            .then((all) => {
+              if (all.length === 0) {
+                database
+                  .collection("companies")
+                  .insertOne({
+                    company_id: company_id,
+                    company_name: company_name,
+                    company_description: company_description,
+                    company_contact_number: company_contact_number,
+                    company_email: company_email,
+                    company_logo: company_logo,
+                    company_state: company_state,
+                    company_city: company_city,
+                  })
+                  .then((doc) => {
+                    res.json(doc);
+                  })
+                  .catch((err) => {
+                    res.status(500).json(err);
+                  });
+              } else {
+                res.status(400).json("Email already exists");
+              }
+            })
+            .catch((err) => {
+              res.status(400).json(err);
+            });
+        } else {
+          res.status(400).json("Company already exist with name");
+        }
+      });
+  }
+};
+const updateCompany = async (req: Request, res: Response): Promise<void> => {
+  const company_id = req.body.company_id;
+  const company_name = req.body.company_name;
+  const company_description = req.body.company_description;
+  const company_contact_number = req.body.company_contact_number;
+  const company_email = req.body.company_email;
+  const company_logo = req.body.company_logo;
+  const company_state = req.body.company_state;
+  const company_city = req.body.company_city;
+  const isvalid =
+    company_id !== null &&
+    company_name !== null &&
+    company_description !== null &&
+    company_contact_number !== null &&
+    company_email !== null &&
+    company_logo !== null &&
+    company_state !== null &&
+    company_city !== null;
+  console.log(
+    company_id,
+    company_name,
+    company_description,
+    company_contact_number,
+    company_email,
+    company_logo,
+    company_state,
+    company_city
+  );
+  if (!isvalid) {
+    res.status(400).json("Missing parameter");
+    return;
+  } else {
+    database.useDb("TestDB");
+    database
+      .collection("companies")
+      .findOne({ company_name: company_name })
+      .then((allCompanes) => {
+        if (allCompanes === null) {
+          database
+            .collection("companies")
+            .findOne({ company_email: company_email })
+
+            .then((all: any) => {
+              if (all.length === 0) {
+                database
+                  .collection("companies")
+                  .updateOne(
+                    { company_id: company_id },
+                    {
+                      $set: {
+                        company_name: company_name,
+                        company_description: company_description,
+                        company_contact_number: company_contact_number,
+                        company_email: company_email,
+                        company_logo: company_logo,
+                        company_state: company_state,
+                        company_city: company_city,
+                      },
+                    }
+                  )
+                  .then((doc) => {
+                    res.json(doc);
+                  })
+                  .catch((err) => {
+                    res.status(500).json(err);
+                  });
+              } else {
+                if (all.company_id === company_id) {
+                  database
+                    .collection("companies")
+                    .updateOne(
+                      { company_id: company_id },
+                      {
+                        $set: {
+                          company_name: company_name,
+                          company_description: company_description,
+                          company_contact_number: company_contact_number,
+                          company_email: company_email,
+                          company_logo: company_logo,
+                          company_state: company_state,
+                          company_city: company_city,
+                        },
+                      }
+                    )
+                    .then((doc) => {
+                      res.json(doc);
+                    })
+                    .catch((err) => {
+                      res.status(500).json(err);
+                    });
+                } else {
+                  res.status(400).json("Company already exist with email");
+                }
+              }
+            });
+        } else {
+          if (allCompanes.company_id === company_id) {
+            database
+              .collection("companies")
+              .updateOne(
+                { company_id: company_id },
+                {
+                  $set: {
+                    company_name: company_name,
+                    company_description: company_description,
+                    company_contact_number: company_contact_number,
+                    company_email: company_email,
+                    company_logo: company_logo,
+                    company_state: company_state,
+                    company_city: company_city,
+                  },
+                }
+              )
+              .then((doc) => {
+                res.json(doc);
+              })
+              .catch((err) => {
+                res.status(500).json(err);
+              });
+          } else {
+            res.status(400).json("Company id does not match");
+          }
+        }
+      });
+  }
+};
+
+export { getCompany, addCompany, deleteCompany, updateCompany };
