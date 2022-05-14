@@ -85,3 +85,45 @@
 .AddButton:focus{
   outline: none;
 }
+
+.FormHead{
+  font-size:medium;
+  font-weight: 400;
+
+}
+
+.formbody{
+  font-size: small;
+}
+
+.formbody input{
+    font-size: small;
+}
+.StateCol{
+  display: flex;
+  flex-direction: column;
+}
+
+.StateCol select{
+  width: 100%;
+  font-size: small;
+
+  padding: 5px;
+  border: 1px solid rgb(186, 183, 183);
+  border-radius: 5px;
+}
+.StateCol select:focus{
+  outline: none;
+
+}
+
+.footer button{
+  font-size: small;
+}
+.CompanytextFilter {
+  font-size: x-small;
+
+}
+.CompanyContactNumberFilter{
+  font-size: x-small;
+}

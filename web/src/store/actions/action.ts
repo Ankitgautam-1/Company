@@ -1,5 +1,5 @@
 export type Companies = {
-  company_id: number;
+  company_id: string;
   company_name: string;
   company_description: string;
   company_contact_number: string;
